@@ -246,7 +246,7 @@ public class StoreStatsService extends ServiceThread {
     private String getPutMessageDistributeTimeStringInfo() {
         final StringBuilder sb = new StringBuilder(512);
         Long total = 0L;
-        List<Long> copyListOfPutMessageDistributeTime = new ArrayList<Long>();
+        List<Long> copyListOfPutMessageDistributeTime = new ArrayList<Long>(this.putMessageDistributeTime.length);
         for (AtomicLong i : this.putMessageDistributeTime) {
             Long item = i.get();
             copyListOfPutMessageDistributeTime.add(item);

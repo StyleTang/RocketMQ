@@ -248,12 +248,14 @@ public class StoreStatsService extends ServiceThread {
     private String getPutMessageDistributeTimeStringInfo() {
         final StringBuilder sb = new StringBuilder(512);
         Long total = 0L;
+        List<Long> copyListOfPutMessageDistributeTime = new ArrayList<Long>();
         for (AtomicLong i : this.putMessageDistributeTime) {
-            total += i.get();
+            Long item = i.get();
+            copyListOfPutMessageDistributeTime.add(item);
+            total += item;
         }
         double doubleValueTotal = (total == 0 ? 1 : total);
-        for (AtomicLong i : this.putMessageDistributeTime) {
-            long value = i.get();
+        for (Long value : copyListOfPutMessageDistributeTime) {
             double ratio = value / doubleValueTotal;
             sb.append("\r\n\t\t");
             sb.append(value + "(" + (ratio * 100) + "%)");

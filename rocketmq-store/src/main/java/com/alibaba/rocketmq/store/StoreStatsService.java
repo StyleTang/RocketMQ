@@ -199,7 +199,7 @@ public class StoreStatsService extends ServiceThread {
         sb.append("\tputMessageEntireTimeMax: " + this.putMessageEntireTimeMax + "\r\n");
         sb.append("\tputMessageTimesTotal: " + totalTimes + "\r\n");
         sb.append("\tputMessageSizeTotal: " + this.getPutMessageSizeTotal() + "\r\n");
-        sb.append("\tputMessageDistributeTime: " + this.getPutMessageDistributeTimeStringInfo(totalTimes)
+        sb.append("\tputMessageDistributeTime: " + this.getPutMessageDistributeTimeStringInfo()
                 + "\r\n");
         sb.append("\tputMessageAverageSize: " + (this.getPutMessageSizeTotal() / totalTimes.doubleValue())
                 + "\r\n");
@@ -245,16 +245,19 @@ public class StoreStatsService extends ServiceThread {
         return rs;
     }
 
-    private String getPutMessageDistributeTimeStringInfo(Long total) {
+    private String getPutMessageDistributeTimeStringInfo() {
         final StringBuilder sb = new StringBuilder(512);
-
+        Long total = 0L;
+        for (AtomicLong i : this.putMessageDistributeTime) {
+            total += i.get();
+        }
+        double doubleValueTotal = (total == 0 ? 1 : total);
         for (AtomicLong i : this.putMessageDistributeTime) {
             long value = i.get();
-            double ratio = value / total.doubleValue();
+            double ratio = value / doubleValueTotal;
             sb.append("\r\n\t\t");
             sb.append(value + "(" + (ratio * 100) + "%)");
         }
-
         return sb.toString();
     }
 
@@ -456,7 +459,7 @@ public class StoreStatsService extends ServiceThread {
         result.put("putMessageTimesTotal", String.valueOf(totalTimes));
         result.put("putMessageSizeTotal", String.valueOf(this.getPutMessageSizeTotal()));
         result.put("putMessageDistributeTime",
-                String.valueOf(this.getPutMessageDistributeTimeStringInfo(totalTimes)));
+                String.valueOf(this.getPutMessageDistributeTimeStringInfo()));
         result.put("putMessageAverageSize",
                 String.valueOf((this.getPutMessageSizeTotal() / totalTimes.doubleValue())));
         result.put("dispatchMaxBuffer", String.valueOf(this.dispatchMaxBuffer));

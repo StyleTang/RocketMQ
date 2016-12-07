@@ -22,9 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
@@ -248,12 +246,14 @@ public class StoreStatsService extends ServiceThread {
     private String getPutMessageDistributeTimeStringInfo() {
         final StringBuilder sb = new StringBuilder(512);
         Long total = 0L;
+        List<Long> copyListOfPutMessageDistributeTime = new ArrayList<Long>();
         for (AtomicLong i : this.putMessageDistributeTime) {
-            total += i.get();
+            Long item = i.get();
+            copyListOfPutMessageDistributeTime.add(item);
+            total += item;
         }
         double doubleValueTotal = (total == 0 ? 1 : total);
-        for (AtomicLong i : this.putMessageDistributeTime) {
-            long value = i.get();
+        for (Long value : copyListOfPutMessageDistributeTime) {
             double ratio = value / doubleValueTotal;
             sb.append("\r\n\t\t");
             sb.append(value + "(" + (ratio * 100) + "%)");
